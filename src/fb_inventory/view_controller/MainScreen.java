@@ -40,9 +40,8 @@ public class MainScreen implements Initializable {
    private TableColumn<Part, Double> partsPrice;
    @FXML
    private Button exitButton;
-   @FXML
-   private Button modifyPartsButton;
-   
+
+
     @FXML
    private void  handleAddPartsButton(ActionEvent e) throws Exception {
         Parent addPartRoot = FXMLLoader.load(getClass().getResource("AddPart.fxml"));
@@ -65,9 +64,9 @@ public class MainScreen implements Initializable {
         modifyPartsStage.show(); 
         
         ModifyPart controller = loader.getController();
-        Part part=partsTable.getSelectionModel().getSelectedItem();
-        int partIndex = Inventory.getInventoryParts().indexOf(part);
-        controller.setPart(part, partIndex);
+        Part selectedPart=partsTable.getSelectionModel().getSelectedItem();
+        int partIndex = Inventory.getInventoryParts().indexOf(selectedPart);
+        controller.setPart(selectedPart, partIndex);
   
        
         

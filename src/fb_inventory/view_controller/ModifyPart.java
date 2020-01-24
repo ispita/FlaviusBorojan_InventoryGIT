@@ -7,7 +7,6 @@ package fb_inventory.view_controller;
 
 import fb_inventory.model.Part;
 import fb_inventory.model.InhousePart;
-import static fb_inventory.model.InhousePart.getInhouseSource;
 import fb_inventory.model.OutsourcedPart;
 import fb_inventory.model.Inventory;
 import static fb_inventory.model.Inventory.getInventoryParts;
@@ -35,7 +34,7 @@ public class ModifyPart {
     @FXML private TextField minText;
     @FXML private Button cancelButton;
     Part part;
-    InhousePart ihPart;
+
     
    
     public void initialize(URL url, ResourceBundle rb) {
@@ -107,14 +106,15 @@ private void handleCancelButton(ActionEvent e){
 
 
 
-     public void setPart(Part part, int partIndex) {
-     if (part instanceof InhousePart){
-    
+     public void setPart(Part selectedPart, int partIndex) {
+     if (selectedPart instanceof InhousePart){
+        
        this.part = getInventoryParts().get(partIndex);
-       int partID = getInventoryParts().get(partIndex).getPartID().get() - 1;
+       int partID = selectedPart.getPartID().get();
        System.out.println(partID);
-       System.out.println(getInventoryParts().get(partID));
-   
+       //System.out.println(getInventoryParts().get(partID));
+       InhousePart ihPart = (InhousePart) selectedPart;
+       String getSource = ihPart.getInhouseSource().get();
        
        // IDField.setText(new Integer(person.getID()).toString());
         nameText.setText(this.part.getName().get());
@@ -122,7 +122,7 @@ private void handleCancelButton(ActionEvent e){
         priceText.setText(Double.toString(this.part.getPrice().get()));
         maxText.setText(Integer.toString(this.part.getMax().get()));
         minText.setText(Integer.toString(this.part.getMin().get()));
-        sourceText.setText(getInhouseSource().get());
+        sourceText.setText(getSource);
        }
      }
       

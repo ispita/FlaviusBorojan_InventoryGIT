@@ -12,13 +12,13 @@ import javafx.beans.property.*;
  */
 public class InhousePart extends Part {
     
-    private static StringProperty inhouseSource;
+    private StringProperty inhouseSource;
     
     public InhousePart(){
          inhouseSource = new SimpleStringProperty();
     }
   
-  public static StringProperty getInhouseSource(){
+  public StringProperty getInhouseSource(){
       return inhouseSource;
   }  
   
