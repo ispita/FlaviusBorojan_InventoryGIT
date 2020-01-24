@@ -8,7 +8,6 @@ package fb_inventory.view_controller;
 import fb_inventory.model.Part;
 import fb_inventory.model.InhousePart;
 import fb_inventory.model.OutsourcedPart;
-import fb_inventory.model.Inventory;
 import static fb_inventory.model.Inventory.getInventoryParts;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,11 +15,12 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.Initializable;
 /**
  *
  * @author flavius8
  */
-public class ModifyPart {
+public class ModifyPart implements Initializable{
     
    
     @FXML private RadioButton addPartInhouse;
@@ -32,13 +32,16 @@ public class ModifyPart {
     @FXML private TextField priceText;
     @FXML private TextField maxText;
     @FXML private TextField minText;
+    @FXML private TextField idText;
     @FXML private Button cancelButton;
+    @FXML private Button saveButton;
     Part part;
-
+    InhousePart ihPart;
+    OutsourcedPart osPart;
     
    
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+       //InhousePart ihPart = (InhousePart) part;
       
     }    
     
@@ -57,7 +60,7 @@ private void radioButtonSelectedOutsourced(ActionEvent e) {
 }
 
     @FXML
-private void handleAddPartsSave(ActionEvent e){
+private void handleModifyPartsSave(ActionEvent e){
     String source = sourceText.getText();
     String name = nameText.getText();
     Integer inv = Integer.parseInt(invText.getText());
@@ -65,37 +68,29 @@ private void handleAddPartsSave(ActionEvent e){
     Integer max = Integer.parseInt(maxText.getText());
     Integer min = Integer.parseInt(minText.getText());
    
-    if (sourceText.getPromptText() == "Mach ID"){
-    InhousePart newPart = new InhousePart();
-    newPart.setInhouseSource(source);
-    newPart.setName(name);
-    newPart.setInv(inv);
-    newPart.setPrice(price);
-    newPart.setMax(max);
-    newPart.setMax(min);
-    newPart.setPartID(Inventory.incrementPartID());
-    Inventory.addPart(newPart);
-    System.out.println("You Added Inhouse.");
+    if (addPartInhouse.isSelected() == true ){
+    InhousePart modifiedPart = (InhousePart) ihPart;
+    modifiedPart.setInhouseSource(source);
+    modifiedPart.setName(name);
+    modifiedPart.setInv(inv);
+    modifiedPart.setPrice(price);
+    modifiedPart.setMax(max);
+    modifiedPart.setMin(min);
+    System.out.println("You Modified Inhouse.");
     
     }
     else{
-    OutsourcedPart newPart = new OutsourcedPart();
-    newPart.setOutsourcedSource(source);
-    newPart.setName(name);
-    newPart.setInv(inv);
-    newPart.setPrice(price);
-    newPart.setMax(max);
-    newPart.setMax(min);
-    newPart.setPartID(Inventory.incrementPartID());
-    Inventory.addPart(newPart);
-    System.out.println("You Added Outourced.");
+    OutsourcedPart modifiedPart = (OutsourcedPart) osPart;
+    modifiedPart.setOutsourcedSource(source);
+    modifiedPart.setName(name);
+    modifiedPart.setInv(inv);
+    modifiedPart.setPrice(price);
+    modifiedPart.setMax(max);
+    modifiedPart.setMin(min);
+    System.out.println("You Modified Outourced.");
     }
-    sourceText.setText("");
-    nameText.setText("");
-    invText.setText("");
-    priceText.setText("");
-    maxText.setText("");
-    minText.setText("");
+    Stage stage = (Stage) saveButton.getScene().getWindow();
+    stage.close();
     
 }
 @FXML
@@ -113,8 +108,8 @@ private void handleCancelButton(ActionEvent e){
        int partID = selectedPart.getPartID().get();
        System.out.println(partID);
        //System.out.println(getInventoryParts().get(partID));
-       InhousePart ihPart = (InhousePart) selectedPart;
-       String getSource = ihPart.getInhouseSource().get();
+       this.ihPart = (InhousePart) selectedPart;
+       String getSource = this.ihPart.getInhouseSource().get();
        
        // IDField.setText(new Integer(person.getID()).toString());
         nameText.setText(this.part.getName().get());
@@ -123,6 +118,7 @@ private void handleCancelButton(ActionEvent e){
         maxText.setText(Integer.toString(this.part.getMax().get()));
         minText.setText(Integer.toString(this.part.getMin().get()));
         sourceText.setText(getSource);
+        idText.setText(Integer.toString(partID));
        }
      }
       

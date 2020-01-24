@@ -53,7 +53,7 @@ public class MainScreen implements Initializable {
     }
    
        @FXML
-   private void  handleModifyPartsButton(ActionEvent e) throws Exception {
+   public void  handleModifyPartsButton(ActionEvent e) throws Exception {
         Stage modifyPartsStage; 
         Parent modifyPartsRoot; 
         modifyPartsStage = new Stage();
