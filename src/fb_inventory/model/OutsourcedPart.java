@@ -18,8 +18,8 @@ public class OutsourcedPart extends Part {
          outsourcedSource = new SimpleStringProperty();
     }
   
-  public String getOutsourcedSource(String sourceName){
-      return this.outsourcedSource.get();
+  public StringProperty getOutsourcedSource(){
+      return outsourcedSource;
   }  
   
   public void setOutsourcedSource(String sourceName){

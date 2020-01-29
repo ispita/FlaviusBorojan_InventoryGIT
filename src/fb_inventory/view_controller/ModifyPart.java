@@ -41,8 +41,7 @@ public class ModifyPart implements Initializable{
     
    
     public void initialize(URL url, ResourceBundle rb) {
-       //InhousePart ihPart = (InhousePart) part;
-      
+      //     
     }    
     
     @FXML
@@ -107,11 +106,11 @@ private void handleCancelButton(ActionEvent e){
        this.part = getInventoryParts().get(partIndex);
        int partID = selectedPart.getPartID().get();
        System.out.println(partID);
-       //System.out.println(getInventoryParts().get(partID));
        this.ihPart = (InhousePart) selectedPart;
        String getSource = this.ihPart.getInhouseSource().get();
        
-       // IDField.setText(new Integer(person.getID()).toString());
+        addPartInhouse.setSelected(true);
+        addPartOutsourced.setSelected(false);
         nameText.setText(this.part.getName().get());
         invText.setText(Integer.toString(this.part.getInv().get()));
         priceText.setText(Double.toString(this.part.getPrice().get()));
@@ -120,6 +119,25 @@ private void handleCancelButton(ActionEvent e){
         sourceText.setText(getSource);
         idText.setText(Integer.toString(partID));
        }
+     else {
+                
+       this.part = getInventoryParts().get(partIndex);
+       int partID = selectedPart.getPartID().get();
+       System.out.println(partID);
+       this.osPart = (OutsourcedPart) selectedPart;
+       String getSource = this.osPart.getOutsourcedSource().get();
+       
+        addPartInhouse.setSelected(false);
+        addPartOutsourced.setSelected(true);
+        nameText.setText(this.part.getName().get());
+        invText.setText(Integer.toString(this.part.getInv().get()));
+        priceText.setText(Double.toString(this.part.getPrice().get()));
+        maxText.setText(Integer.toString(this.part.getMax().get()));
+        minText.setText(Integer.toString(this.part.getMin().get()));
+        sourceText.setText(getSource);
+        idText.setText(Integer.toString(partID));
+         
+     }
      }
       
 }

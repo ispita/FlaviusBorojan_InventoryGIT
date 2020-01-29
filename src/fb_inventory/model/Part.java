@@ -19,16 +19,6 @@ public abstract class Part {
     private IntegerProperty max; 
 
 
- /*   
- public Part(int partID, String name, int inv, double price, int min, int max){
- this.partID = partID;
- this.name = name;
- this.inv = inv;
- this.price = price;
- this.min = min;
- this.max = max;
- }
- */
  public Part(){
  partID = new SimpleIntegerProperty();
  name = new SimpleStringProperty();
