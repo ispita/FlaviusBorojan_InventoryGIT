@@ -5,8 +5,8 @@
  */
 package fb_inventory.model;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
+
 /**
  *
  * @author flavius8
@@ -68,14 +68,18 @@ public class Product {
   public static void removeCurrentParts(Part currentPart){
      currentParts.remove(currentPart);
  }
-  public static void modifyCurrentParts(ObservableList<Part> newPartList){
+/*  public static void modifyCurrentParts(ObservableList<Part> newPartList){
       //currentParts.clear();
       newPartList.forEach((part) -> {
       System.out.println("Entered ModifyCurrentParts " + part);
       // currentParts.addAll(currentPart);
       currentParts.add(part);
       });
- } 
+ } */
+  
+  public void modifyCurrentParts(ObservableList<Part> currentParts){
+      this.currentParts = currentParts;
+  }
 
  public void setProductID(int num){
      this.productID.set(num);

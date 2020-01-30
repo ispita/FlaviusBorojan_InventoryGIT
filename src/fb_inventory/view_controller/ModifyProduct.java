@@ -47,7 +47,7 @@ public class ModifyProduct implements Initializable {
     @FXML private TextField idText;
     @FXML private Button cancelButton;
     Product product;
-    private static ObservableList<Part> tempCurrentParts = FXCollections.observableArrayList();
+    private ObservableList<Part> tempCurrentParts = FXCollections.observableArrayList();
     private int selectedProductIndex;
 
     @FXML
@@ -99,23 +99,24 @@ public class ModifyProduct implements Initializable {
         @FXML
 private void handleModifyProductsSave(ActionEvent e){
     
+    Product modifyProduct = new Product();
     String name = nameText.getText();
     Integer inv = Integer.parseInt(invText.getText());
     Double price = Double.parseDouble(priceText.getText());
     Integer max = Integer.parseInt(maxText.getText());
     Integer min = Integer.parseInt(minText.getText());   
     
-    product.setName(name);
-    product.setInv(inv);
-    product.setPrice(price);
-    product.setMax(max);
-    product.setMin(min);
+    modifyProduct.setName(name);
+    modifyProduct.setInv(inv);
+    modifyProduct.setPrice(price);
+    modifyProduct.setMax(max);
+    modifyProduct.setMin(min);
   //  product.removeAllCurrentParts();
     //currentPartsTable.getItems().clear();
-    System.out.println(product.getName());
+    System.out.println(modifyProduct.getName());
     System.out.println("This is tempCurrentParts before:" + tempCurrentParts);
      //tempCurrentParts.forEach((part) -> {
-     product.modifyCurrentParts(tempCurrentParts);
+     modifyProduct.modifyCurrentParts(tempCurrentParts);
      //System.out.println(part);
     //});
    // Inventory.modifyProduct(selectedProductIndex, product);
@@ -136,7 +137,7 @@ private void handleModifyProductsSave(ActionEvent e){
 private void handleModifyPartsSave (ActionEvent e){
      Part selectedPart=availablePartsTable.getSelectionModel().getSelectedItem();
      tempCurrentParts.add(selectedPart);
-     
+ 
      
 
 
@@ -159,7 +160,8 @@ private void handleCancelButton(ActionEvent e){
  
 public void setProduct(Product selectedProduct, int productIndex) {
        this.selectedProductIndex = productIndex;
-       this.product = getInventoryProducts().get(productIndex);
+       //this.product = getInventoryProducts().get(productIndex);
+       this.product = selectedProduct;
        System.out.println(selectedProduct.getCurrentParts());
        int productID = selectedProduct.getProductID().get();
        System.out.println(productID);
@@ -172,7 +174,7 @@ public void setProduct(Product selectedProduct, int productIndex) {
         idText.setText(Integer.toString(productID));
         
         tempCurrentParts = this.product.getCurrentParts();
-        currentPartsTable.setItems(tempCurrentParts);
+        currentPartsTable.setItems(selectedProduct.getCurrentParts());
        }
 
 }
