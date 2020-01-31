@@ -7,7 +7,6 @@ package fb_inventory.view_controller;
 
 import fb_inventory.model.Part;
 import fb_inventory.model.Product;
-import fb_inventory.model.InhousePart;
 import fb_inventory.model.Inventory;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -21,6 +20,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.collections.*;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  *
@@ -50,6 +52,10 @@ public class MainScreen implements Initializable {
    private TableColumn<Product, Double> productsPrice;
    @FXML
    private Button exitButton;
+   @FXML
+   private TextField partSearchField;
+   @FXML
+   private TextField productSearchField;
    private Inventory inventory;
 
 
@@ -102,6 +108,7 @@ public class MainScreen implements Initializable {
         controller.setPart(selectedPart, partIndex, inventory);
 
     }
+   
        @FXML
    public void  handleModifyProductsButton(ActionEvent e) throws Exception {
         Stage modifyProductsStage; 
@@ -121,9 +128,55 @@ public class MainScreen implements Initializable {
         modifyProductsStage.show(); 
 
     }
+   @FXML
+   public void handleRemoveProductButton(ActionEvent e){
+       Product selectedProduct=productsTable.getSelectionModel().getSelectedItem();
+       int productIndex = inventory.getInventoryProducts().indexOf(selectedProduct);
+       inventory.removeProduct(productIndex);
+       
+   } 
+   
+      @FXML
+   public void handleRemovePartsButton(ActionEvent e){
+       Part selectedPart=partsTable.getSelectionModel().getSelectedItem();
+       int partIndex = inventory.getInventoryParts().indexOf(selectedPart);
+       inventory.removePart(partIndex);
+       
+   } 
+   
+   @FXML
+   public void handleSearchPartsButton(ActionEvent e){
+       System.out.println("Testing Search Functions" + partSearchField.getText());
+   }
+   
      public void updatePartsTable() {
-        partsTable.setItems(inventory.getInventoryParts());
-    }
+       partsTable.setItems(inventory.getInventoryParts());
+      FilteredList<Part> filteredPartList = new FilteredList<>(inventory.getInventoryParts(), p -> true);
+        partSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredPartList.setPredicate(part -> {
+                if(newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+               
+                if(part.getName().get().contains(newValue)) {
+                    return true; 
+                } else if(String.valueOf(part.getPartID().get()).contains(newValue)) {
+                    return true;
+                }
+                return false; 
+            });
+            SortedList<Part> sortedPartList = new SortedList<>(filteredPartList);
+
+       
+        sortedPartList.comparatorProperty().bind(partsTable.comparatorProperty());
+        partsID.setCellValueFactory(cellData -> cellData.getValue().getPartID().asObject());
+        partsName.setCellValueFactory(cellData -> cellData.getValue().getName());
+        partsInv.setCellValueFactory(cellData -> cellData.getValue().getInv().asObject());
+        partsPrice.setCellValueFactory(cellData -> cellData.getValue().getPrice().asObject());
+        partsTable.setItems(sortedPartList);
+        partsTable.refresh();
+    });
+   }
         
      public void updateProductsTable() {
         productsTable.setItems(inventory.getInventoryProducts());

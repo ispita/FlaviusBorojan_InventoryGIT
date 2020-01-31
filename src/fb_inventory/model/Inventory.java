@@ -31,6 +31,15 @@ public class Inventory {
         inventoryParts.add(part);
     }
     
+    public Part searchPart(int index){
+       return inventoryParts.get(index);
+    }
+    
+     
+    public void removePart(int index){
+        inventoryParts.remove(index);
+    }
+    
      public static int incrementPartID(){
          partIDNum = partIDNum + 1;
          return partIDNum;
@@ -46,7 +55,10 @@ public class Inventory {
     public void modifyProduct(int index, Product product){
         inventoryProducts.set(index,product);
     }
-
+    
+    public void removeProduct(int index){
+        inventoryProducts.remove(index);
+    }
     
      public static int incrementProductID(){
          productIDNum = productIDNum + 1;

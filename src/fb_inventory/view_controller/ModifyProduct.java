@@ -152,8 +152,8 @@ private void handleModifyPartsSave (ActionEvent e){
 
 @FXML
 private void handleModifyPartsDelete (ActionEvent e){
-     Part selectedPart=availablePartsTable.getSelectionModel().getSelectedItem();
-     //tempCurrentPartList.remove(selectedPart);
+     Part selectedPart=currentPartsTable.getSelectionModel().getSelectedItem();
+     tempCurrentPartList.remove(selectedPart);
      
 
 
