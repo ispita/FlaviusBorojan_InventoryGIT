@@ -154,15 +154,10 @@ public class MainScreen implements Initializable {
       FilteredList<Part> filteredPartList = new FilteredList<>(inventory.getInventoryParts(), p -> true);
         partSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredPartList.setPredicate(part -> {
-                if(newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-               
+                              
                 if(part.getName().get().contains(newValue)) {
                     return true; 
-                } else if(String.valueOf(part.getPartID().get()).contains(newValue)) {
-                    return true;
-                }
+                } 
                 return false; 
             });
             SortedList<Part> sortedPartList = new SortedList<>(filteredPartList);
