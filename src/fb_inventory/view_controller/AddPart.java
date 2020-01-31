@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.scene.Node;
 /**
  *
  * @author flavius8
@@ -36,7 +37,7 @@ public class AddPart implements Initializable {
     @FXML private TextField maxText;
     @FXML private TextField minText;
     @FXML private Button cancelButton;
-    
+    Inventory inventory;
    @Override
     public void initialize(URL url, ResourceBundle rb){
     System.out.println("initialized add part");
@@ -77,7 +78,7 @@ private void handleAddPartsSave(ActionEvent e){
     newPart.setMax(max);
     newPart.setMin(min);
     newPart.setPartID(Inventory.incrementPartID());
-    Inventory.addPart(newPart);
+    inventory.addPart(newPart);
     System.out.println("You Added Inhouse.");
     
     }
@@ -90,7 +91,7 @@ private void handleAddPartsSave(ActionEvent e){
     newPart.setMax(max);
     newPart.setMin(min);
     newPart.setPartID(Inventory.incrementPartID());
-    Inventory.addPart(newPart);
+    inventory.addPart(newPart);
     System.out.println("You Added Outourced.");
     }
     sourceText.setText("");
@@ -102,8 +103,21 @@ private void handleAddPartsSave(ActionEvent e){
     
 }
 @FXML
-private void handleCancelButton(ActionEvent e){
-    Stage stage = (Stage) cancelButton.getScene().getWindow();
-    stage.close();
+private void handleCancelButton(ActionEvent e)throws Exception{
+        Stage mainStage; 
+        Parent mainRoot; 
+        mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+        mainRoot = loader.load();
+        
+        MainScreen controller = loader.getController();
+        controller.setGlobalInventory(inventory);        
+        Scene addProductScene = new Scene(mainRoot);
+        mainStage.setScene(addProductScene);           
+        mainStage.show(); 
+}
+
+public void setGlobalInventory(Inventory inventory){
+    this.inventory = inventory;
 }
 }

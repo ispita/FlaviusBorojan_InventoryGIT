@@ -12,16 +12,22 @@ import javafx.collections.ObservableList;
  * @author flavius8
  */
 public class Inventory {
-    private static ObservableList<Part> inventoryParts = FXCollections.observableArrayList();
-    private static ObservableList<Product> inventoryProducts = FXCollections.observableArrayList();
+    private ObservableList<Part> inventoryParts;
+    private ObservableList<Product> inventoryProducts;
    // public static ObservableList<Part> currentParts = FXCollections.observableArrayList();
     private static int partIDNum = 0;
     private static int productIDNum = 0;
     
-     public static ObservableList<Part> getInventoryParts() {
+    public Inventory(){
+        this.inventoryParts = FXCollections.observableArrayList();
+        this.inventoryProducts  = FXCollections.observableArrayList();
+    }
+            
+            
+     public ObservableList<Part> getInventoryParts() {
         return inventoryParts;
     }
-     public static void addPart(Part part) {
+     public void addPart(Part part) {
         inventoryParts.add(part);
     }
     
@@ -30,14 +36,14 @@ public class Inventory {
          return partIDNum;
      }
      
-    public static ObservableList<Product> getInventoryProducts() {
+    public ObservableList<Product> getInventoryProducts() {
         return inventoryProducts;
     }
-     public static void addProduct(Product product) {
+     public void addProduct(Product product) {
         inventoryProducts.add(product);
     }
      
-    public static void modifyProduct(int index, Product product){
+    public void modifyProduct(int index, Product product){
         inventoryProducts.set(index,product);
     }
 

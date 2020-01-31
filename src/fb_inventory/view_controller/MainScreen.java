@@ -9,8 +9,6 @@ import fb_inventory.model.Part;
 import fb_inventory.model.Product;
 import fb_inventory.model.InhousePart;
 import fb_inventory.model.Inventory;
-import static fb_inventory.model.Inventory.getInventoryParts;
-import static fb_inventory.model.Inventory.getInventoryProducts;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -22,7 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
+import javafx.collections.*;
 
 /**
  *
@@ -52,33 +50,46 @@ public class MainScreen implements Initializable {
    private TableColumn<Product, Double> productsPrice;
    @FXML
    private Button exitButton;
+   private Inventory inventory;
 
 
     @FXML
    private void  handleAddPartsButton(ActionEvent e) throws Exception {
-        Parent addPartRoot = FXMLLoader.load(getClass().getResource("AddPart.fxml"));
-        Stage addPartStage = new Stage();
-        Scene addPartScene = new Scene(addPartRoot);
-
-        addPartStage.setScene(addPartScene);
-        addPartStage.show();
+        Stage addPartsStage; 
+        Parent addPartsRoot; 
+        addPartsStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("AddPart.fxml"));
+        addPartsRoot = loader.load();
+        Scene addPartsScene = new Scene(addPartsRoot);
+        addPartsStage.setScene(addPartsScene);           
+        addPartsStage.show();
+        AddPart controller = loader.getController();
+        controller.setGlobalInventory(inventory);
+    
     }
    
        @FXML
    private void  handleAddProductButton(ActionEvent e) throws Exception {
-        Parent addProductRoot = FXMLLoader.load(getClass().getResource("AddProduct.fxml"));
-        Stage addProductStage = new Stage();
+       
+        Stage addProductStage; 
+        Parent addProductRoot; 
+        addProductStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("AddProduct.fxml"));
+        addProductRoot = loader.load();
+        
+        AddProduct controller = loader.getController();
+        controller.setGlobalInventory(inventory);
         Scene addProductScene = new Scene(addProductRoot);
+        addProductStage.setScene(addProductScene);           
+        addProductStage.show(); 
 
-        addProductStage.setScene(addProductScene);
-        addProductStage.show();
     }
    
        @FXML
    public void  handleModifyPartsButton(ActionEvent e) throws Exception {
         Stage modifyPartsStage; 
         Parent modifyPartsRoot; 
-        modifyPartsStage = new Stage();
+        modifyPartsStage = (Stage)((Node)e.getSource()).getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyPart.fxml"));
         modifyPartsRoot = loader.load();
         Scene scene = new Scene(modifyPartsRoot);
@@ -87,42 +98,50 @@ public class MainScreen implements Initializable {
         
         ModifyPart controller = loader.getController();
         Part selectedPart=partsTable.getSelectionModel().getSelectedItem();
-        int partIndex = Inventory.getInventoryParts().indexOf(selectedPart);
-        controller.setPart(selectedPart, partIndex);
+        int partIndex = inventory.getInventoryParts().indexOf(selectedPart);
+        controller.setPart(selectedPart, partIndex, inventory);
 
     }
        @FXML
    public void  handleModifyProductsButton(ActionEvent e) throws Exception {
         Stage modifyProductsStage; 
         Parent modifyProductsRoot; 
-        modifyProductsStage = new Stage();
+        modifyProductsStage = (Stage)((Node)e.getSource()).getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyProduct.fxml"));
         modifyProductsRoot = loader.load();
-        Scene scene = new Scene(modifyProductsRoot);
-        modifyProductsStage.setScene(scene);
-        modifyProductsStage.show(); 
+      
         
         ModifyProduct controller = loader.getController();
         Product selectedProduct=productsTable.getSelectionModel().getSelectedItem();
-        int productIndex = Inventory.getInventoryProducts().indexOf(selectedProduct);
-        controller.setProduct(selectedProduct, productIndex);
+        ObservableList selectProductPartsList = selectedProduct.getCurrentParts();
+        int productIndex = inventory.getInventoryProducts().indexOf(selectedProduct);
+        controller.setProduct(selectedProduct, productIndex, selectProductPartsList, inventory);
+        Scene scene = new Scene(modifyProductsRoot);
+        modifyProductsStage.setScene(scene);
+        modifyProductsStage.show(); 
 
     }
      public void updatePartsTable() {
-        partsTable.setItems(getInventoryParts());
+        partsTable.setItems(inventory.getInventoryParts());
     }
         
      public void updateProductsTable() {
-        productsTable.setItems(getInventoryProducts());
+        productsTable.setItems(inventory.getInventoryProducts());
     }
    @FXML  
    private void handleExitButton(ActionEvent e){
     Stage stage = (Stage) exitButton.getScene().getWindow();
     stage.close();
 }
+   public void setGlobalInventory(Inventory inventory){
+    this.inventory = inventory;
+       updateProductsTable();
+       updatePartsTable();
+}
    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+    this.inventory = new Inventory();
     partsID.setCellValueFactory(cellData -> cellData.getValue().getPartID().asObject());
     partsName.setCellValueFactory(cellData -> cellData.getValue().getName());
     partsInv.setCellValueFactory(cellData -> cellData.getValue().getInv().asObject());

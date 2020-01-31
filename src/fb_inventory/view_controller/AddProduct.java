@@ -7,8 +7,6 @@ package fb_inventory.view_controller;
 
 
 import fb_inventory.model.Inventory;
-import static fb_inventory.model.Inventory.getInventoryParts;
-//import fb_inventory.model.Product.getCurrentParts;
 import fb_inventory.model.Part;
 import fb_inventory.model.Product;
 import java.net.URL;
@@ -17,7 +15,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -43,7 +45,7 @@ public class AddProduct implements Initializable {
     @FXML private TextField maxText;
     @FXML private TextField minText;
     @FXML private Button cancelButton;
-    private static ObservableList<Part> tempCurrentParts = FXCollections.observableArrayList();
+    private ObservableList<Part> tempCurrentParts = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Part> availablePartsTable;
@@ -65,6 +67,7 @@ public class AddProduct implements Initializable {
     private TableColumn<Part, Integer> currentPartsInv;
     @FXML
     private TableColumn<Part, Double> currentPartsPrice;
+    Inventory inventory;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     availablePartsID.setCellValueFactory(cellData -> cellData.getValue().getPartID().asObject());
@@ -75,12 +78,11 @@ public class AddProduct implements Initializable {
     currentPartsName.setCellValueFactory(cellData -> cellData.getValue().getName());
     currentPartsInv.setCellValueFactory(cellData -> cellData.getValue().getInv().asObject());
     currentPartsPrice.setCellValueFactory(cellData -> cellData.getValue().getPrice().asObject());
-    updateCurrentPartsTable();
-    updateAvailablePartsTable();
+   
     }    
     
     public void updateAvailablePartsTable() {
-        availablePartsTable.setItems(getInventoryParts());
+        availablePartsTable.setItems(inventory.getInventoryParts());
     }
     
     public void updateCurrentPartsTable() {
@@ -88,7 +90,7 @@ public class AddProduct implements Initializable {
     }
     
         @FXML
-private void handleAddProductsSave(ActionEvent e){
+private void handleAddProductsSave(ActionEvent e)throws Exception{
     
     String name = nameText.getText();
     Integer inv = Integer.parseInt(invText.getText());
@@ -97,23 +99,38 @@ private void handleAddProductsSave(ActionEvent e){
     Integer min = Integer.parseInt(minText.getText());
    
     Product newProduct = new Product();
+    inventory.addProduct(newProduct);
+    int testIndex = inventory.getInventoryProducts().indexOf(newProduct);
     newProduct.setName(name);
     newProduct.setInv(inv);
     newProduct.setPrice(price);
     newProduct.setMax(max);
     newProduct.setMin(min);
     newProduct.setProductID(Inventory.incrementProductID());
-    newProduct.setCurrentParts(tempCurrentParts);
-    Inventory.addProduct(newProduct);
-    System.out.println("You Added a Product");
+    ObservableList<Part> test = FXCollections.observableArrayList();
+    test.addAll(tempCurrentParts);
+    inventory.getInventoryProducts().get(testIndex).setCurrentParts(test);
+    
+    
+
     tempCurrentPartsTable.getItems().clear();
+    tempCurrentParts.removeAll(tempCurrentParts);
     nameText.setText("");
     invText.setText("");
     priceText.setText("");
     maxText.setText("");
     minText.setText("");
-    Stage stage = (Stage) cancelButton.getScene().getWindow();
-     stage.close();
+        Stage mainStage; 
+        Parent mainRoot; 
+        mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+        mainRoot = loader.load();
+        
+        MainScreen controller = loader.getController();
+        controller.setGlobalInventory(inventory);
+        Scene addProductScene = new Scene(mainRoot);
+        mainStage.setScene(addProductScene);           
+        mainStage.show(); 
 }
 @FXML
 private void handleAddPartsSave (ActionEvent e){
@@ -133,9 +150,24 @@ private void handleAddPartsDelete (ActionEvent e){
 
 } 
 @FXML
-private void handleCancelButton(ActionEvent e){
-    Stage stage = (Stage) cancelButton.getScene().getWindow();
-    stage.close();
+private void handleCancelButton(ActionEvent e) throws Exception{
+        Stage mainStage; 
+        Parent mainRoot; 
+        mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+        mainRoot = loader.load();
+        
+        MainScreen controller = loader.getController();
+        controller.setGlobalInventory(inventory);
+        Scene addProductScene = new Scene(mainRoot);
+        mainStage.setScene(addProductScene);           
+        mainStage.show(); 
+}
+
+public void setGlobalInventory(Inventory inventory){
+    this.inventory = inventory;
+     updateCurrentPartsTable();
+    updateAvailablePartsTable();
 }
     
 }

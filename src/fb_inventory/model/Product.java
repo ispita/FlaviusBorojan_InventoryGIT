@@ -19,7 +19,7 @@ public class Product {
     private DoubleProperty price;
     private IntegerProperty min;
     private IntegerProperty max; 
-    private static ObservableList<Part> currentParts = FXCollections.observableArrayList();
+    private ObservableList<Part> currentParts;
 
 
  
@@ -30,6 +30,7 @@ public class Product {
  price = new SimpleDoubleProperty();
  min = new SimpleIntegerProperty();      
  max = new SimpleIntegerProperty();
+ currentParts = FXCollections.observableArrayList();
 
      
  }
@@ -62,10 +63,14 @@ public class Product {
     return currentParts;
  }
 
- public static void setCurrentParts(ObservableList currentPart){
-     currentParts.addAll(currentPart);
+ public void setCurrentParts(ObservableList<Part> currentPart){
+     currentPart.forEach((part)-> {
+         currentParts.add(part);
+         System.out.println("Another Part Added");
+     });
+    // currentParts.add(currentPart);
  }
-  public static void removeCurrentParts(Part currentPart){
+  public void removeCurrentParts(Part currentPart){
      currentParts.remove(currentPart);
  }
 /*  public static void modifyCurrentParts(ObservableList<Part> newPartList){
@@ -77,8 +82,10 @@ public class Product {
       });
  } */
   
-  public void modifyCurrentParts(ObservableList<Part> currentParts){
-      this.currentParts = currentParts;
+  public void modifyCurrentParts(ObservableList<Part> currentPartList){
+      //this.currentParts = currentPartList;
+      this.currentParts.setAll(currentPartList);
+      System.out.println("Current parts in the products class: " + this.currentParts);
   }
 
  public void setProductID(int num){

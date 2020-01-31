@@ -8,14 +8,18 @@ package fb_inventory.view_controller;
 import fb_inventory.model.Part;
 import fb_inventory.model.InhousePart;
 import fb_inventory.model.OutsourcedPart;
-import static fb_inventory.model.Inventory.getInventoryParts;
+import fb_inventory.model.Inventory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 /**
  *
  * @author flavius8
@@ -38,6 +42,7 @@ public class ModifyPart implements Initializable{
     Part part;
     InhousePart ihPart;
     OutsourcedPart osPart;
+    Inventory inventory;
     
    
     public void initialize(URL url, ResourceBundle rb) {
@@ -93,17 +98,27 @@ private void handleModifyPartsSave(ActionEvent e){
     
 }
 @FXML
-private void handleCancelButton(ActionEvent e){
-    Stage stage = (Stage) cancelButton.getScene().getWindow();
-    stage.close();
+private void handleCancelButton(ActionEvent e) throws Exception{
+        Stage mainStage; 
+        Parent mainRoot; 
+        mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+        mainRoot = loader.load();
+        
+        MainScreen controller = loader.getController();
+        controller.setGlobalInventory(inventory);
+        Scene addProductScene = new Scene(mainRoot);
+        mainStage.setScene(addProductScene);           
+        mainStage.show(); 
 }
 
 
 
-     public void setPart(Part selectedPart, int partIndex) {
+     public void setPart(Part selectedPart, int partIndex, Inventory inventory) {
+         this.inventory = inventory;
      if (selectedPart instanceof InhousePart){
         
-       this.part = getInventoryParts().get(partIndex);
+       this.part = inventory.getInventoryParts().get(partIndex);
        int partID = selectedPart.getPartID().get();
        System.out.println(partID);
        this.ihPart = (InhousePart) selectedPart;
@@ -121,7 +136,7 @@ private void handleCancelButton(ActionEvent e){
        }
      else {
                 
-       this.part = getInventoryParts().get(partIndex);
+       this.part = inventory.getInventoryParts().get(partIndex);
        int partID = selectedPart.getPartID().get();
        System.out.println(partID);
        this.osPart = (OutsourcedPart) selectedPart;

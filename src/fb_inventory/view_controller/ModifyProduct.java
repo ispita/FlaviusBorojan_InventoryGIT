@@ -7,10 +7,6 @@ package fb_inventory.view_controller;
 
 
 import fb_inventory.model.Inventory;
-import static fb_inventory.model.Inventory.getInventoryParts;
-import static fb_inventory.model.Inventory.getInventoryProducts;
-//import fb_inventory.model.Product.getCurrentParts;
-
 import fb_inventory.model.Part;
 import fb_inventory.model.Product;
 import java.net.URL;
@@ -19,7 +15,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -47,8 +47,9 @@ public class ModifyProduct implements Initializable {
     @FXML private TextField idText;
     @FXML private Button cancelButton;
     Product product;
-    private ObservableList<Part> tempCurrentParts = FXCollections.observableArrayList();
+    private ObservableList<Part> tempCurrentPartList = FXCollections.observableArrayList();
     private int selectedProductIndex;
+    private Inventory inventory;
 
     @FXML
     private TableView<Part> availablePartsTable;
@@ -80,64 +81,70 @@ public class ModifyProduct implements Initializable {
     currentPartsName.setCellValueFactory(cellData -> cellData.getValue().getName());
     currentPartsInv.setCellValueFactory(cellData -> cellData.getValue().getInv().asObject());
     currentPartsPrice.setCellValueFactory(cellData -> cellData.getValue().getPrice().asObject());
-    updateCurrentPartsTable();
-    updateAvailablePartsTable();
+    //updateCurrentPartsTable();
+    //updateAvailablePartsTable();
     }    
     
     public void updateAvailablePartsTable() {
-        availablePartsTable.setItems(getInventoryParts());
+        availablePartsTable.setItems(inventory.getInventoryParts());
     }
     
   //  public void updateActualPartsTable() {
    //     availablePartsTable.setItems(getCurrentParts());
   //  }
     
-    public void updateCurrentPartsTable() {
-        currentPartsTable.setItems(tempCurrentParts);
+   public void updateCurrentPartsTable() {
+        currentPartsTable.setItems(tempCurrentPartList);
     }
     
         @FXML
-private void handleModifyProductsSave(ActionEvent e){
+private void handleModifyProductsSave(ActionEvent e) throws Exception{
     
     Product modifyProduct = new Product();
     String name = nameText.getText();
     Integer inv = Integer.parseInt(invText.getText());
     Double price = Double.parseDouble(priceText.getText());
     Integer max = Integer.parseInt(maxText.getText());
-    Integer min = Integer.parseInt(minText.getText());   
+    Integer min = Integer.parseInt(minText.getText());
+    Integer productID = Integer.parseInt(idText.getText());
     
     modifyProduct.setName(name);
     modifyProduct.setInv(inv);
     modifyProduct.setPrice(price);
     modifyProduct.setMax(max);
     modifyProduct.setMin(min);
+    modifyProduct.setProductID(productID);
   //  product.removeAllCurrentParts();
     //currentPartsTable.getItems().clear();
-    System.out.println(modifyProduct.getName());
-    System.out.println("This is tempCurrentParts before:" + tempCurrentParts);
-     //tempCurrentParts.forEach((part) -> {
-     modifyProduct.modifyCurrentParts(tempCurrentParts);
+     //tempCurrentPartList.forEach((part) -> {
+     modifyProduct.modifyCurrentParts(tempCurrentPartList);
      //System.out.println(part);
     //});
-   // Inventory.modifyProduct(selectedProductIndex, product);
-    updateCurrentPartsTable();
+    inventory.modifyProduct(selectedProductIndex, modifyProduct);
+    //updateCurrentPartsTable();
    // Inventory.addProduct(newProduct);
-    System.out.println("This is tempCurrentParts after:" + tempCurrentParts);
-    System.out.println("You Modified a Product");
- 
-    nameText.setText("");
-    invText.setText("");
-    priceText.setText("");
-    maxText.setText("");
-    minText.setText("");
-    Stage stage = (Stage) cancelButton.getScene().getWindow();
-     stage.close();
+
+
+
+
+            //System.out.println("this should be empty: " + tempCurrentPartList); 
+        Stage mainStage; 
+        Parent mainRoot; 
+        mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+        mainRoot = loader.load();
+        
+         MainScreen controller = loader.getController();
+        controller.setGlobalInventory(inventory);
+        Scene addProductScene = new Scene(mainRoot);
+        mainStage.setScene(addProductScene);           
+        mainStage.show(); 
 }
 @FXML
 private void handleModifyPartsSave (ActionEvent e){
      Part selectedPart=availablePartsTable.getSelectionModel().getSelectedItem();
-     tempCurrentParts.add(selectedPart);
- 
+     tempCurrentPartList.add(selectedPart);
+     currentPartsTable.refresh();
      
 
 
@@ -146,25 +153,36 @@ private void handleModifyPartsSave (ActionEvent e){
 @FXML
 private void handleModifyPartsDelete (ActionEvent e){
      Part selectedPart=availablePartsTable.getSelectionModel().getSelectedItem();
-     //tempCurrentParts.remove(selectedPart);
+     //tempCurrentPartList.remove(selectedPart);
      
 
 
 } 
 @FXML
-private void handleCancelButton(ActionEvent e){
-    Stage stage = (Stage) cancelButton.getScene().getWindow();
-    stage.close();
+private void handleCancelButton(ActionEvent e) throws Exception{
+        Stage mainStage; 
+        Parent mainRoot; 
+        mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+        mainRoot = loader.load();
+        
+        MainScreen controller = loader.getController();
+        controller.setGlobalInventory(inventory);
+        Scene addProductScene = new Scene(mainRoot);
+        mainStage.setScene(addProductScene);           
+        mainStage.show(); 
 }
     
  
-public void setProduct(Product selectedProduct, int productIndex) {
+public void setProduct(Product selectedProduct, int productIndex, ObservableList selectProductPartsList, Inventory inventory) {
+       this.inventory = inventory;
        this.selectedProductIndex = productIndex;
        //this.product = getInventoryProducts().get(productIndex);
        this.product = selectedProduct;
-       System.out.println(selectedProduct.getCurrentParts());
+
        int productID = selectedProduct.getProductID().get();
        System.out.println(productID);
+       System.out.println("This is the Index: " + productIndex);
        
         nameText.setText(this.product.getName().get());
         invText.setText(Integer.toString(this.product.getInv().get()));
@@ -172,9 +190,13 @@ public void setProduct(Product selectedProduct, int productIndex) {
         maxText.setText(Integer.toString(this.product.getMax().get()));
         minText.setText(Integer.toString(this.product.getMin().get()));
         idText.setText(Integer.toString(productID));
-        
-        tempCurrentParts = this.product.getCurrentParts();
-        currentPartsTable.setItems(selectedProduct.getCurrentParts());
+
+        System.out.println("temp parts on open: " + tempCurrentPartList);
+        System.out.println("selected product parts list: " + selectProductPartsList);
+        tempCurrentPartList.addAll(selectProductPartsList);
+        currentPartsTable.setItems(tempCurrentPartList);
+         updateCurrentPartsTable();
+         updateAvailablePartsTable();
        }
 
 }
