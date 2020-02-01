@@ -13,6 +13,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -71,6 +74,8 @@ public class ModifyProduct implements Initializable {
     private TableColumn<Part, Integer> currentPartsInv;
     @FXML
     private TableColumn<Part, Double> currentPartsPrice;
+    @FXML
+    private TextField partSearchField;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     availablePartsID.setCellValueFactory(cellData -> cellData.getValue().getPartID().asObject());
@@ -99,14 +104,37 @@ public class ModifyProduct implements Initializable {
     
         @FXML
 private void handleModifyProductsSave(ActionEvent e) throws Exception{
-    
+     if(nameText.getText().isEmpty() == true || priceText.getText().isEmpty() == true){
+       Alert alert = new Alert(Alert.AlertType.INFORMATION);
+       alert.setTitle("Incorrect Entry");
+       alert.setHeaderText("Please Fix Inventory Entries");
+       alert.setContentText("Products MUST have a name and a price");
+       
+       alert.showAndWait();
+    }
+     else if (currentPartsTable.getItems().isEmpty() == true){
+       Alert alert = new Alert(Alert.AlertType.INFORMATION);
+       alert.setTitle("Incorrect Entry");
+       alert.setHeaderText("Please Fix Inventory Entries");
+       alert.setContentText("Products MUST have at least one part");
+       
+       alert.showAndWait();
+     }
+     else{
     Product modifyProduct = new Product();
     String name = nameText.getText();
-    Integer inv = Integer.parseInt(invText.getText());
-    Double price = Double.parseDouble(priceText.getText());
+    Integer inv;
     Integer max = Integer.parseInt(maxText.getText());
     Integer min = Integer.parseInt(minText.getText());
+    Double price = Double.parseDouble(priceText.getText());
     Integer productID = Integer.parseInt(idText.getText());
+    if (invText.getText().isEmpty() == true){
+    inv = 0;        
+    }
+    else{
+    inv = Integer.parseInt(invText.getText());
+    }
+   
     
     modifyProduct.setName(name);
     modifyProduct.setInv(inv);
@@ -139,6 +167,7 @@ private void handleModifyProductsSave(ActionEvent e) throws Exception{
         Scene addProductScene = new Scene(mainRoot);
         mainStage.setScene(addProductScene);           
         mainStage.show(); 
+     }
 }
 @FXML
 private void handleModifyPartsSave (ActionEvent e){
@@ -157,7 +186,30 @@ private void handleModifyPartsDelete (ActionEvent e){
      
 
 
-} 
+}
+
+ @FXML
+   public void handleSearchPartsButton(ActionEvent e){
+      FilteredList<Part> filteredPartList = new FilteredList<>(inventory.getInventoryParts(), p -> true);
+      String searchValue = partSearchField.getText();
+            filteredPartList.setPredicate(part -> {                              
+                if(part.getName().get().contains(searchValue)) {
+                    return true; 
+                } 
+                return false; 
+            });
+            SortedList<Part> sortedPartList = new SortedList<>(filteredPartList);
+
+       
+        sortedPartList.comparatorProperty().bind(availablePartsTable.comparatorProperty());
+        availablePartsID.setCellValueFactory(cellData -> cellData.getValue().getPartID().asObject());
+        availablePartsName.setCellValueFactory(cellData -> cellData.getValue().getName());
+        availablePartsInv.setCellValueFactory(cellData -> cellData.getValue().getInv().asObject());
+        availablePartsPrice.setCellValueFactory(cellData -> cellData.getValue().getPrice().asObject());
+        availablePartsTable.setItems(sortedPartList);
+  
+   }
+
 @FXML
 private void handleCancelButton(ActionEvent e) throws Exception{
         Stage mainStage; 

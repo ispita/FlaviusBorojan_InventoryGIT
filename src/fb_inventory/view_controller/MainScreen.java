@@ -146,16 +146,10 @@ public class MainScreen implements Initializable {
    
    @FXML
    public void handleSearchPartsButton(ActionEvent e){
-       System.out.println("Testing Search Functions" + partSearchField.getText());
-   }
-   
-     public void updatePartsTable() {
-       partsTable.setItems(inventory.getInventoryParts());
       FilteredList<Part> filteredPartList = new FilteredList<>(inventory.getInventoryParts(), p -> true);
-        partSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredPartList.setPredicate(part -> {
-                              
-                if(part.getName().get().contains(newValue)) {
+      String searchValue = partSearchField.getText();
+            filteredPartList.setPredicate(part -> {                              
+                if(part.getName().get().contains(searchValue)) {
                     return true; 
                 } 
                 return false; 
@@ -169,8 +163,34 @@ public class MainScreen implements Initializable {
         partsInv.setCellValueFactory(cellData -> cellData.getValue().getInv().asObject());
         partsPrice.setCellValueFactory(cellData -> cellData.getValue().getPrice().asObject());
         partsTable.setItems(sortedPartList);
-        partsTable.refresh();
-    });
+  
+   }
+   
+      @FXML
+   public void handleSearchProductsButton(ActionEvent e){
+      FilteredList<Product> filteredProductList = new FilteredList<>(inventory.getInventoryProducts(), p -> true);
+      String searchValue = productSearchField.getText();
+            filteredProductList.setPredicate(product -> {                              
+                if(product.getName().get().contains(searchValue)) {
+                    return true; 
+                } 
+                return false; 
+            });
+            SortedList<Product> sortedProductList = new SortedList<>(filteredProductList);
+
+       
+        sortedProductList.comparatorProperty().bind(productsTable.comparatorProperty());
+        partsID.setCellValueFactory(cellData -> cellData.getValue().getPartID().asObject());
+        partsName.setCellValueFactory(cellData -> cellData.getValue().getName());
+        partsInv.setCellValueFactory(cellData -> cellData.getValue().getInv().asObject());
+        partsPrice.setCellValueFactory(cellData -> cellData.getValue().getPrice().asObject());
+        productsTable.setItems(sortedProductList);
+  
+   }
+   
+     public void updatePartsTable() {
+       partsTable.setItems(inventory.getInventoryParts());
+
    }
         
      public void updateProductsTable() {

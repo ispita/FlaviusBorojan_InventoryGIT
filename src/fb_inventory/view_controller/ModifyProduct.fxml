@@ -31,8 +31,8 @@
                <children>
                   <Pane prefHeight="29.0" prefWidth="451.0">
                      <children>
-                        <TextField layoutX="83.0" layoutY="2.0" prefHeight="17.0" prefWidth="201.0" />
-                        <Button mnemonicParsing="false" text="Search" />
+                        <TextField fx:id="partSearchField" layoutX="83.0" layoutY="2.0" prefHeight="17.0" prefWidth="201.0" />
+                        <Button mnemonicParsing="false" onAction="#handleSearchPartsButton" text="Search" />
                      </children>
                   </Pane>
                   <TableView fx:id="availablePartsTable" layoutX="3.0" layoutY="42.0" prefHeight="118.0" prefWidth="362.0">

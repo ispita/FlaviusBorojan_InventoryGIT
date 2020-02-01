@@ -64,7 +64,7 @@ private void radioButtonSelectedOutsourced(ActionEvent e) {
 }
 
     @FXML
-private void handleModifyPartsSave(ActionEvent e){
+private void handleModifyPartsSave(ActionEvent e)throws Exception{
     String source = sourceText.getText();
     String name = nameText.getText();
     Integer inv = Integer.parseInt(invText.getText());
@@ -93,8 +93,17 @@ private void handleModifyPartsSave(ActionEvent e){
     modifiedPart.setMin(min);
     System.out.println("You Modified Outourced.");
     }
-    Stage stage = (Stage) saveButton.getScene().getWindow();
-    stage.close();
+        Stage mainStage; 
+        Parent mainRoot; 
+        mainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+        mainRoot = loader.load();
+        
+        MainScreen controller = loader.getController();
+        controller.setGlobalInventory(inventory);        
+        Scene addProductScene = new Scene(mainRoot);
+        mainStage.setScene(addProductScene);           
+        mainStage.show(); 
     
 }
 @FXML

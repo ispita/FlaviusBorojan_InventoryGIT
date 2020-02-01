@@ -26,6 +26,6 @@
       <TextField fx:id="minText" layoutX="252.0" layoutY="242.0" prefHeight="36.0" prefWidth="70.0" promptText="Min" />
       <TextField fx:id="sourceText" layoutX="137.0" layoutY="286.0" prefHeight="36.0" prefWidth="115.0" promptText="Mach ID" />
       <Button layoutX="181.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleAddPartsSave" prefWidth="60.0" text="Save" />
-      <Button fx:id="cancelButton" layoutX="271.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleCancelButton" prefWidth="60.0" text="Cancel" />
+      <Button fx:id="cancelButton" layoutX="248.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleCancelButton" prefHeight="25.0" prefWidth="83.0" text="Cancel/Exit" />
    </children>
 </AnchorPane>
